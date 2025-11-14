@@ -7,6 +7,14 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 600,
   physics: {
     default: "matter",
+    matter: { 
+      setBounds: {
+        top: false,
+        bottom: false,
+        right: true,
+        left: true,
+        }
+      }
   },
   scene: GameEngine
 };
