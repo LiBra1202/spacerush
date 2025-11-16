@@ -11,20 +11,24 @@ export class InfoPanel {
         this.scene = scene;
 
         // ikonka
-        this.icon = scene.add.image(45, 555, 'infoIcon')
+        this.icon = scene.add.image(50, 645, 'infoIcon')
             .setInteractive()
-            .setScale(0.5)
+            .setScale(0.6)
             .setDepth(1000) 
             .setScrollFactor(0)
             .setOrigin(0.5);
 
-        this.text = scene.add.text(400, 300,
-`PRAVIDLA HRY STARFALL:
+        this.text = scene.add.text(450, 350,
+`PRAVIDLA HRY SPACE RUSH:
 
-- Klikni pro spuštění hvězd
-- Klikni znovu, a zem s hvězdami zmizí
-- Tlačítkem můžeš vynulovat celkový počet hvězd
-- Pokud se objeví 15 hvězd, máš štěstí a jsi vítěz!`,
+- Kliknutím na tlačítko spustíš ikony
+- Pokud se některá ikona objeví 8x nebo více, vyhráváš
+- Násobky vkladu u výher:
+  Strom: 2x
+  Měsíc: 5x
+  Slunce: 10x
+  Saturn: 50x
+  Kometa: 1000x`,
         {
             fontFamily: 'Arial',
             fontSize: '20px',

@@ -1,239 +1,134 @@
 import Phaser from 'phaser';
 import { InfoPanel } from './infoPanel';
-import { LoadGame } from './loadGame';
+import { GameGrid } from './gameGrid';
+import { BackgroundGame } from './backgroundGame';
 
 export class GameEngine extends Phaser.Scene
 {
-    public infoText!: Phaser.GameObjects.Text;
-    public starCounterText!: Phaser.GameObjects.Text;
-    public celebrationText!: Phaser.GameObjects.Text;
-    private celebrationTimer?: Phaser.Time.TimerEvent;
-    private isCelebrationActive = false;
-    public readonly MAX_STARS = 15;
-    public stars: Phaser.Physics.Matter.Image[] = [];
-    public starCount: number = 0;
-    public ground?: Phaser.Physics.Matter.Image;
     public star_bg: Phaser.GameObjects.Image[] = [];
-    public resetButton!: Phaser.GameObjects.Text;
     public infoPanel!: InfoPanel;
 
+    private creditText!: Phaser.GameObjects.Text;
+    private winText!: Phaser.GameObjects.Text;
+    private betText!: Phaser.GameObjects.Text;
+    private credit: number = 1000;
+    private win: number = 0;
+    private currentBet: number = 5;
+
+    private grid!: GameGrid;
+    private isAnimating = false;
+
     preload ()
-    {
+    {   
         this.load.image('logo', 'assets/logo.png');
-        this.load.image('buttonBG', 'assets/button-bg.png');
-        this.load.image('buttonText', 'assets/button-text.png');
         this.load.image('sky', 'assets/sky.jpg');
-        this.load.image('star', 'assets/star.png');
         this.load.image('star_bg', 'assets/star_bg.png');
-        this.load.image('ground', 'assets/ground.png');
         this.load.image('infoIcon', 'assets/info.png');
+        this.load.image('button', 'assets/button.png');
+        for (let i = 0; i < 5; i++) {
+        this.load.image(`icon${i}`, "assets/sprites/icon" + i + ".jpg");
+        }
     }
 
     create ()
     {   
 
-        //úvodní obrazovka
-        this.add.image(400, 170, 'logo');
-        const bg = this.add.image(0, 0, 'buttonBG').setInteractive();
-        const text = this.add.image(0, 0, 'buttonText');
+        //logo
+        this.add.image(120, 80, 'logo')
+        .setDisplaySize(180, 120)
+        .setDepth(2);
 
-        //lesk pro bg
-        if (bg.preFX) {
-        const glowFX = bg.preFX.addGlow();
-        }
+        //info panel
+        this.infoPanel = new InfoPanel(this);
 
-        //button
-        const container = this.add.container(400, 370, [ bg, text ]);
+        //vytvoření pozadí
+        BackgroundGame.run(this);
 
-        //------------------------------
+        //textová pole
+        this.creditText = this.add.text(225, 645, `Kredit: ${this.credit} Kč`, {
+            font: "24px Arial",
+            color: "#000000"
+        }).setDepth(2);
 
-        // text (uprostřed nahoře)
-        this.infoText = this.add.text(400, 35, '', {
-            fontSize: '20px',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        this.winText = this.add.text(550, 645, `Výhra: ${this.win} Kč`, {
+            font: "24px Arial",
+            color: "#ffff00"
+        }).setDepth(2);
 
+        this.betText = this.add.text(450, 70, `Výše sázky: ${this.currentBet} Kč`, {
+            font: "24px Arial",
+            color: "#ffff00",
+            backgroundColor: "#606060ff",
+            padding: { x: 10, y: 5 },
+        }).setOrigin(0.5)
+        .setDepth(2);
 
-        //počítadlo hvězd
-        this.starCounterText = this.add.text(10, 10, 'Hvězdy celkem: 0', {
-            fontSize: '18px',
-            color: '#ffffff'
-        });
-        this.starCounterText.setVisible(false);  // skrytý text při startu
+        //------------------------
 
+        // vytvoření gridu
+        this.grid = new GameGrid(this);
+        
+        // generování herního pole
+        this.grid.generate();
+        this.grid.render();
 
-        //reset počítadla
-        this.resetButton = this.add.text(610, 10, 'Resetovat počet', {
-            fontSize: '18px',
-            color: '#ffffffff',
-            backgroundColor: '#000000',
-            padding: { x: 10, y: 5 }
-        })
+        const button = this.add.image(800, 350, "button")
         .setInteractive()
-        .setDepth(2)
-        .setVisible(false)
-        .on('pointerdown', (pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) => {
-        event.stopPropagation();
-            this.starCount = 0;
-            this.starCounterText.setText('Hvězdy celkem: 0');
-        })
-        .on('pointerover', () => {
-            this.resetButton.setStyle({
-            color: '#000000',
-            backgroundColor: '#ffffffff'
-            });
-        })
-        .on('pointerout', () => {
-            this.resetButton.setStyle({
-            color: '#ffffffff',
-            backgroundColor: '#000000'
-            });
+        .setDisplaySize(120, 120)
+        .setDepth(2);
+
+        button.on("pointerdown", () => {
+
+            if (this.isAnimating) return;
+            this.isAnimating = true; //zablokuje button při animaci
+
+            if (this.currentBet > this.credit) {
+            return;
+            }
+            // odečte sázku
+            this.credit -= this.currentBet;
+            this.creditText.setText(`Kredit: ${this.credit} Kč`);
+
+            // při kliknutí odstraň staré, proveď animaci a poté generuj nové ikonky
+            this.grid.clearSprites(() => {
+                this.time.delayedCall(100, () => {
+                    this.grid.generate();
+                    this.grid.render(() => {
+                        this.isAnimating = false; // odblokuje button
+
+                        //zobrazí výhru a přičte částku k zůstatku
+                        const winAmount = this.grid.calculateWin(this.currentBet);
+                        this.win = winAmount;
+                        this.winText.setText(`Výhra: ${this.win} Kč`);
+                        if (winAmount > 0) {
+                            this.credit += winAmount;
+                            this.creditText.setText(`Kredit: ${this.credit} Kč`);
+                        }
+
+                        this.blinkWinText();
+                    });
+                });  
+            });  
+
         });
-
-        //ověří dostupnost fontu a vytvoří text na MAX počet
-        document.fonts.load('96px "Luckiest Guy"').then(() => {
-            this.celebrationText = this.add.text(400, 280, 'BIG WIN!', {
-                fontFamily: 'Luckiest Guy',
-                fontSize: '96px',
-                color: '#c36a04ff',
-                //fontStyle: 'bold',
-                stroke: '#000000',
-                strokeThickness: 6
-            })
-            .setOrigin(0.5)
-            .setAlpha(0)
-            .setDepth(5);
-         });   
-
-         this.infoPanel = new InfoPanel(this);
-        //------------------------------
-
-        this.input.on('pointerdown', this.handleClick, this);
+        
     }
 
-    //metoda pro přidání hvězd a sčítání počtu
-    public addStar(x?: number, y?: number) 
-    {
-        const posX = x ?? Phaser.Math.Between(50, 750);
-        const posY = y ?? Phaser.Math.Between(-200, 200);
-
-        const star = this.matter.add.image(posX, posY, 'star').setDepth(2);
-        this.stars.push(star);
-
-        this.starCount++;
-        this.starCounterText.setText(`Hvězdy celkem: ${this.starCount}`);
-    }
-
-    //odebrání hvězd po každém kole
-    public clearStars() 
-    {
-    this.stars.forEach(star => {
-        if (star.body) {
-            this.matter.world.remove(star.body);
+    //blikající text po výhře
+    blinkWinText(times: number = 10, duration: number = 100) {
+    if (this.win <= 0) return;
+    //tween
+    this.tweens.add({
+        targets: this.winText,
+        alpha: 0,
+        yoyo: true,
+        repeat: times - 1,
+        duration: duration,
+        ease: "Linear",
+        onComplete: () => {
+            this.winText.setAlpha(1); 
         }
-        star.destroy();
-        });
-    this.stars = [];
+    });   
     }
-
-    //fadein a fadeout pro info text
-    public fadeText(newText: string) 
-    {
-        this.tweens.add({
-            targets: this.infoText,
-            alpha: 0,
-            duration: 300,
-            ease: 'Linear',
-            onComplete: () => {
-                this.infoText.setText(newText);
-
-                this.tweens.add({
-                    targets: this.infoText,
-                    alpha: 1,
-                    duration: 500,
-                    ease: 'Linear'
-                });
-            }
-        });
-    }
-
-    // výherní text
-    public showCelebration() 
-    {
-        this.isCelebrationActive = true;
-        this.celebrationText.setAlpha(1).setVisible(true);
-
-        this.tweens.add({
-            targets: this.celebrationText,
-            scale: { from: 1, to: 1.3 },
-            duration: 500,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        if (this.celebrationTimer) {
-            this.celebrationTimer.remove();
-        }
-
-        // zmizí po 5 sekundách
-        this.celebrationTimer = this.time.delayedCall(5000, () => {
-            if (this.isCelebrationActive) {
-            this.hideCelebration();
-            }
-        });
-    }
-
-    public hideCelebration() 
-    {
-        this.isCelebrationActive = false;
-
-        this.tweens.killTweensOf(this.celebrationText);
-
-        this.tweens.add({
-            targets: this.celebrationText,
-            alpha: 0,
-            duration: 300,
-            onComplete: () => {
-                this.celebrationText.setScale(1);
-            }
-        });
-    }
-
-
-    //spustí hru
-
-    private handleClick() 
-     {
-        if (this.ground) {
-
-            //zmizí big win
-            if (this.isCelebrationActive) {
-                if (this.celebrationTimer) {
-                    this.celebrationTimer.remove();
-                    this.celebrationTimer = undefined;
-                }
-                this.hideCelebration();
-            }
-
-            //zmizí zem
-            this.tweens.add({
-                targets: this.ground,
-                alpha: 0,
-                duration: 300,
-                ease: 'Linear',
-                onComplete: () => {
-                    this.ground?.destroy();
-                    this.ground = undefined;
-
-                    this.fadeText('Klikni pro obnovení');
-                }
-            });
-        } else {
-            // Pokud zem neexistuje, spustí nové kolo
-            LoadGame.run(this);
-        }
-    }
-
 
 }

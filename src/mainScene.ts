@@ -3,19 +3,8 @@ import { GameEngine } from './gameEngine';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: {
-    default: "matter",
-    matter: { 
-      setBounds: {
-        top: false,
-        bottom: false,
-        right: true,
-        left: true,
-        }
-      }
-  },
+  width: 900,
+  height: 700,
   scene: GameEngine
 };
 
