@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "C:\\Programovani\\Projekty\\spacerush.git\\src\\assets\\textury",
+  "images": [
+    {
+      "name": "button.png",
+      "path": "C:/Programovani/Grafika/spacerush/assets/button.png",
+      "folder": ""
+    },
+    {
+      "name": "icon0.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/icon0.jpg",
+      "folder": ""
+    },
+    {
+      "name": "icon1.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/icon1.jpg",
+      "folder": ""
+    },
+    {
+      "name": "icon2.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/icon2.jpg",
+      "folder": ""
+    },
+    {
+      "name": "icon3.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/icon3.jpg",
+      "folder": ""
+    },
+    {
+      "name": "icon4.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/icon4.jpg",
+      "folder": ""
+    },
+    {
+      "name": "info.png",
+      "path": "C:/Programovani/Grafika/spacerush/assets/info.png",
+      "folder": ""
+    },
+    {
+      "name": "logo.png",
+      "path": "C:/Programovani/Grafika/spacerush/assets/logo.png",
+      "folder": ""
+    },
+    {
+      "name": "sky.jpg",
+      "path": "C:/Programovani/Grafika/spacerush/assets/sky.jpg",
+      "folder": ""
+    },
+    {
+      "name": "star_bg.png",
+      "path": "C:/Programovani/Grafika/spacerush/assets/star_bg.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "spacerush",
+    "textureFormat": "png",
+    "removeFileExtension": true,
+    "prependFolderName": true,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "Phaser 3",
+    "fileName": "pack-result",
+    "savePath": "C:\\Programovani\\Projekty\\spacerush.git\\src\\assets\\textury",
+    "width": 2048,
+    "height": 2048,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}

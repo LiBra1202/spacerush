@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
-import { GameEngine } from './gameEngine';
+import { MainScene } from './scene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 900,
   height: 700,
-  scene: GameEngine
+  scene: MainScene
 };
 
 new Phaser.Game(config);

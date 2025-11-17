@@ -11,7 +11,7 @@ export class InfoPanel {
         this.scene = scene;
 
         // ikonka
-        this.icon = scene.add.image(50, 645, 'infoIcon')
+        this.icon = scene.add.image(50, 645,"default", 'info')
             .setInteractive()
             .setScale(0.6)
             .setDepth(1000) 
