@@ -9,7 +9,6 @@ export class StartButton extends Sprite{
     this.enable();
   }
 
-
   public enable(): void
   {
     this.setInteractive();
@@ -21,5 +20,19 @@ export class StartButton extends Sprite{
     this.setAlpha(0.5);
   }
 
+  public animWinText(winText: Phaser.GameObjects.Text,times: number = 5, duration: number = 100) {
+    this.scene.tweens.add({
+        targets: winText,
+        alpha: 0,
+        yoyo: true,
+        repeat: times - 1,
+        duration: duration,
+        ease: "Linear",
+        onComplete: () => {
+            winText.setAlpha(1);
+            this.enable();
+        }
+    });
+  }
 
 }

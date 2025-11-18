@@ -139,7 +139,7 @@ export class GameGrid {
     }
     // hledá jestli se ikona objevila 8x nebo více
     for (let i = 0; i < counts.length; i++) {
-        if (counts[i] >= 8) {
+        if (counts[i] >= 9) {
             // výhra = sázka × násobek
             return bet * this.payouts[i];
         }

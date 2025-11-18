@@ -22,7 +22,7 @@ export class InfoPanel {
 `PRAVIDLA HRY SPACE RUSH:
 
 - Kliknutím na tlačítko spustíš ikony
-- Pokud se některá ikona objeví 8x nebo více, vyhráváš
+- Pokud se některá ikona objeví 9x nebo více, vyhráváš
 - Násobky vkladu u výher:
   Strom: 2x
   Měsíc: 5x
