@@ -1,41 +1,28 @@
-import Sprite = Phaser.GameObjects.Sprite;
 import Container = Phaser.GameObjects.Container;
 export class Star extends Container {
-
-  private stars: Sprite[] = []
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y);
 
-    for (let i = 0; i < 40; i++) {
-      const x = Phaser.Math.Between(0, 900);
-      const y = Phaser.Math.Between(0, 700);
-
-      const star = new Sprite(scene, x, y, "default", 'star_bg')
-        .setAlpha(Phaser.Math.FloatBetween(0.2, 1))
-        .setScale(Phaser.Math.FloatBetween(0.5, 1))
+    this.add(scene.add.particles(x, y, 'default', { 
+    frame: "star_bg" ,
       
-      this.add(star);
-      this.stars.push(star);
-    }
+    x: { min: 0, max: 900 },
+    y: { min: 0, max: 700 },
 
-    this.playAnim();
-  }
+    scale: { min: 0.7, max: 1.2 },
 
-  private playAnim(): void {
+    alpha: {
+      start: Phaser.Math.FloatBetween(0, 0.5),
+      end: Phaser.Math.FloatBetween(0.5, 1)
+    },
 
-    this.scene.tweens.add({
-      targets: this.stars,
-      alpha: { from: 0.2, to: 1 },
-      duration: Phaser.Math.Between(500, 1500),
-      yoyo: true,
-      repeat: -1,
-      delay: (target:any) => {
-        const index = this.stars.indexOf(target);
-        return index * 500;
-      }
-    });
-
+    lifespan: () => Phaser.Math.Between(3000, 6000),
+    frequency: 180,
+    speed: 0
+  
+  })
+  );
 
   }
 }

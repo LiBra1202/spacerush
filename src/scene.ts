@@ -73,10 +73,28 @@ export class MainScene extends Phaser.Scene {
                 this.startButton.disable();
                 this.credit += winAmount;
                 this.creditText.setText(`Kredit: ${this.credit} Kč`);
-                this.startButton.animWinText(this.winText);
+                this.animWinText();
                 }
             });
         }); 
+    }
+
+    //blikající text po výhře
+    private animWinText(times: number = 5, duration: number = 100) {
+    if (this.win <= 0) return;
+    //tween
+    this.tweens.add({
+        targets: this.winText,
+        alpha: 0,
+        yoyo: true,
+        repeat: times - 1,
+        duration: duration,
+        ease: "Linear",
+        onComplete: () => {
+            this.winText.setAlpha(1);
+            this.startButton.enable();
+        }
+    });
     }
 
 }
