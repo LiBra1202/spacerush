@@ -18,9 +18,7 @@ export class Textstyles{
   //Styl pro text výše sázky
   public static BetText: Textstyle = {
     font: "24px Arial",
-    color: "#ffff00",
-    backgroundColor: "#606060ff",
-    padding: { x: 10, y: 5 },
+    color: "#000000",
   }
 
 }
